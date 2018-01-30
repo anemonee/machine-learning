@@ -86,11 +86,8 @@ class LearningAgent(Agent):
         ## TO DO ##
         ###########
         # Calculate the maximum Q-value of all actions for a given state
-        
-        maxQ = -1000.0
-        for action in self.Q[state]:
-            if maxQ < self.Q[state][action]:
-                maxQ = self.Q[state][action]
+        maxQ = max(self.Q[state].values()) 
+
         return maxQ 
         
 
@@ -120,18 +117,21 @@ class LearningAgent(Agent):
         self.next_waypoint = self.planner.next_waypoint()
         action = None
         
-        maxvalue = self.get_maxQ(state)
-
+        actions_tie = []
         if not self.learning:
             action = random.choice(self.valid_actions)
         else:
             if random.random() < self.epsilon:
                 action = random.choice(self.valid_actions)
             else:
+                maxvalue = self.get_maxQ(state)
                 for i in self.Q[state]:
                     if self.Q[state][i] == maxvalue:
-                        action = i
-                    
+                        actions_tie.append(i)
+                if len(actions_tie) > 1:
+                    action = random.choice(actions_tie)
+                else:
+                    action = actions_tie[0]               
 
         ########### 
         ## TO DO ##
